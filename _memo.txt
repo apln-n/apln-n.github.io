@@ -1,2 +1,11 @@
 Reactで作ったSPAをnpm run buildして出来上がったbuildディレクトリを、このリポジトリのpages/に置く
 	ディレクトリ名はそのSPAの機能が分かる物に変えておくと便利。
+
+よく出るエラー:
+	Need to specify how to reconcile divergent branches
+		これで直る
+			git config pull.rebase true
+			git pull
+		参考:
+			https://blog.agile.esm.co.jp/entry/git-warns-pulling-without-specifying-how-to-reconcile-divergent-branches
+			
