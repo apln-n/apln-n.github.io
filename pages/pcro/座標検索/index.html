@@ -255,14 +255,14 @@
           "シルキー": {"x":145, "y":140},
           "イフリン": {"x":195, "y":116},
           //建造物
-          "旧・水のイド": {"x":70, "y":248},
-          "旧・風のイド": {"x":237, "y":126},
-          "旧・地のイド": {"x":195, "y":247},
-          "旧・火のイド": {"x":271, "y":130},
-          "水のイド": {"x":109, "y":185},
-          "風のイド": {"x":145, "y":141},
-          "地のイド": {"x":77, "y":134},
-          "火のイド": {"x":196, "y":116},
+          "旧・水のイド(崩壊世界)": {"x":70, "y":248},
+          "旧・風のイド(崩壊世界)": {"x":237, "y":126},
+          "旧・地のイド(崩壊世界)": {"x":195, "y":247},
+          "旧・火のイド(崩壊世界)": {"x":271, "y":130},
+          "新・水のイド(崩壊世界)": {"x":109, "y":185},
+          "新・風のイド(崩壊世界)": {"x":145, "y":141},
+          "新・地のイド(崩壊世界)": {"x":77, "y":134},
+          "新・火のイド(崩壊世界)": {"x":196, "y":116},
         },
         "ミルフィーナ":{
           "コリアンダー(ミルフィーナ)": {"x":304, "y":536},
@@ -750,10 +750,17 @@
           const errorElement = document.querySelector("li.SearchFromName > div > div.Manual > div.ErrorMessage > font");
           if(yourName !== ""){
             const Katakana = (str) => {
-              return str.replace(/[\u3041-\u3096]/g, function(match) {
+              const newStr = str.replace(/[\u3041-\u3096]/g, function(match) {
                 var chr = match.charCodeAt(0) + 0x60;
                 return String.fromCharCode(chr);
               });
+              for (let i=0;i<newStr.length;i++){
+                //漢字など特殊記号が含まれてる場合はそのままreturn
+                if(newStr[i] === str[i]){
+                  return str;
+                }
+              }
+              return newStr;
             };
             const katakanaName = Katakana(yourName);
             let result = null;
