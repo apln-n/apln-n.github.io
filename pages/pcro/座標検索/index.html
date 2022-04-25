@@ -15,7 +15,7 @@
       <br/><br/>
       <label>座標: </label><br/>
       (<input class="x" type="number" style="width: 40px"></input>, <input class="y" type="number" style="width: 40px"></input>)
-      <button class="Search" onclick="search({type: 'SearchFromCoordinate'})">調べる！</button>
+      <button class="Search" onclick="search({type: 'SearchFromCoordinate'})">検索</button>
       <div class="ErrorMessage">
         <font color="red"><br/></font>
       </div>
@@ -28,7 +28,7 @@
         <form onsubmit="return false;">
           <label>名前: </label><br/>
           <input class="Name" type="text" style="width: 150px"  autoComplete="off"></input>
-          <button class="Search" onclick="search({type: 'SearchFromName', method: 'Manual'})">調べる！</button>
+          <button class="Search" onclick="search({type: 'SearchFromName', method: 'Manual'})">検索</button>
         </form>
         <div class="ErrorMessage">
           <font color="red"><br/></font>
@@ -45,7 +45,7 @@
         </select><br/>
         <select class="World" style="display:none;" onchange="setSequence({order:'Name'})"></select>
         <select class="Name" style="display:none" onchange="setSequence({order:'Search'})"></select>
-        <button class="Search" style="display:none" onclick="search({type: 'SearchFromName', method: 'Sequence'})">調べる！</button>
+        <button class="Search" style="display:none" onclick="search({type: 'SearchFromName', method: 'Sequence'})">検索</button>
       </div>
     </div>
   </li>
@@ -516,14 +516,7 @@
       プレイヤー目線でのborder
       ゲーム内で、マップ上において東西南北で最も「出っ張った」地形に行ってそこの座標をメモする。マップ画像もこのborderに対応させるようにトリミングする。
       これによりマーカーの座標計算が正確・簡単になる。
-
-
-
-
-      マップ追加のためにこのborderを調べる必要あり
-
-
-
+      マップ追加のためにこのborderを調べる必要があります
     */
     //constMapWidthの数値が、マップがウィンドウに表示される際の大きさとなる
     const constMapWidth = 400;
@@ -695,7 +688,7 @@
         }
         sequenceElement.querySelector(":scope > button.Search").style.display = "none";
       }else if(order === "Search"){
-        ///全てのプルダウンで値が選択されていたら、「調べる」ボタンを表示する。
+        ///全てのプルダウンで値が選択されていたら、「検索」ボタンを表示する。
         const NPCorBOSS = sequenceElement.querySelector(":scope > select.NPCorBOSS").value;
         const world = sequenceElement.querySelector(":scope > select.World").value;
         const name = sequenceElement.querySelector(":scope > select.Name").value;
