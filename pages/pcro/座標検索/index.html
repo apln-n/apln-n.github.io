@@ -11,11 +11,11 @@
       <h3>座標から</h3>
       <!-- その座標から十分に近いNPC・ボスケモノがいるなら、その名前も表示される -->
       <label>ワールド名: </label><br/>
-      <select class="NPCorBOSS"></select>
+      <select class="NPCorBOSS" style="font-size:16px;"></select>
       <br/><br/>
       <label>座標: </label><br/>
-      (<input class="x" type="number" style="width: 40px"></input>, <input class="y" type="number" style="width: 40px"></input>)
-      <button class="Search" onclick="search({type: 'SearchFromCoordinate'})">検索</button>
+      (<input class="x" type="number" style="font-size:16px;width:40px"></input>, <input class="y" type="number" style="font-size:16px;width:40px"></input>)
+      <button class="Search" style="font-size:16px;" onclick="search({type: 'SearchFromCoordinate'})">検索</button>
       <div class="ErrorMessage">
         <font color="red"><br/></font>
       </div>
@@ -27,8 +27,8 @@
       <div class="Manual">
         <form onsubmit="return false;">
           <label>名前: </label><br/>
-          <input class="Name" type="text" style="width: 150px"  autoComplete="off"></input>
-          <button class="Search" onclick="search({type: 'SearchFromName', method: 'Manual'})">検索</button>
+          <input class="Name" type="text" style="font-size:16px;width:150px"  autoComplete="off"></input>
+          <button class="Search" style="font-size:16px;" onclick="search({type: 'SearchFromName', method: 'Manual'})">検索</button>
         </form>
         <div class="ErrorMessage">
           <font color="red"><br/></font>
@@ -36,16 +36,16 @@
       </div>
       <div class="Sequence">
         <label>プルダウンで検索:</label><br/>
-        <select class="NPCorBOSS" onchange="setSequence({order:'World'})">
+        <select class="NPCorBOSS" style="font-size:16px;" onchange="setSequence({order:'World'})">
           <option value="">-</option>
           <option value="NPC">NPC</option>
           <option value="ボスケモノ">ボスケモノ</option>
           <option value="フィールドボス">フィールドボス</option>
           <option value="時間湧きボス">時間湧きボス</option>
         </select><br/>
-        <select class="World" style="display:none;" onchange="setSequence({order:'Name'})"></select>
-        <select class="Name" style="display:none" onchange="setSequence({order:'Search'})"></select>
-        <button class="Search" style="display:none" onclick="search({type: 'SearchFromName', method: 'Sequence'})">検索</button>
+        <select class="World" style="display:none;font-size:16px;" onchange="setSequence({order:'Name'})"></select>
+        <select class="Name" style="display:none;font-size:16px;" onchange="setSequence({order:'Search'})"></select>
+        <button class="Search" style="display:none;font-size:16px;" onclick="search({type: 'SearchFromName', method: 'Sequence'})">検索</button>
       </div>
     </div>
   </li>
