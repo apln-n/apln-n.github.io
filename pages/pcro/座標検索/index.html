@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>タイトル</title>
+</head>
+
+<body>
+  <li class="SearchFromCoordinate" style="display:inline-block; vertical-align:top; text-align:left; padding-right:100px">
+    <div>
+      <h3>座標から</h3>
+      <!-- その座標から十分に近いNPC・ボスケモノがいるなら、その名前も表示される -->
+      <select class="NPCorBOSS"></select>
+      <br/><br/>
+      (<input class="x" type="number" style="width: 40px"></input>, <input class="y" type="number" style="width: 40px"></input>)
+      <button class="Search" onclick="search({type: 'SearchFromCoordinate'})">調べる！</button>
+      <div class="ErrorMessage">
+        <font color="red"><br/></font>
+      </div>
+    </div>
+  </li>
+  <li class="SearchFromName" style="display:inline-block; vertical-align:top; text-align:left;">
+    <div>
+      <h3>NPC・ボスケモノ名から</h3>
+      <div class="Manual">
+        <form onsubmit="return false;">
+          <label>名前: </label><br/>
+          <input class="Name" type="text" style="width: 150px"  autoComplete="off"></input>
+          <button class="Search" onclick="search({type: 'SearchFromName', method: 'Manual'})">調べる！</button>
+        </form>
+        <div class="ErrorMessage">
+          <font color="red"><br/></font>
+        </div>
+      </div>
+      <div class="Sequence">
+        <label>絞り込み検索:</label><br/>
+        <select class="NPCorBOSS" onchange="setSequence({order:'World'})">
+          <option value="">-</option>
+          <option value="NPC">NPC</option>
+          <option value="ボスケモノ">ボスケモノ</option>
+          <option value="フィールドボス">フィールドボス</option>
+          <option value="時間湧きボス">時間湧きボス</option>
+        </select><br/>
+        <select class="World" style="display:none;" onchange="setSequence({order:'Name'})"></select>
+        <select class="Name" style="display:none" onchange="setSequence({order:'Search'})"></select>
+        <button class="Search" style="display:none" onclick="search({type: 'SearchFromName', method: 'Sequence'})">調べる！</button>
+      </div>
+    </div>
+  </li>
+  <br/>
+  <div class="Result" style="display: none;">
+    <h3>★検索結果★</h3>
+    <!-- 必要に応じてMemoをMapと同時に表示する -->
+    <div class="Memo"></div>
+    <div class="Map" style="padding:15px">
+      <img alt="マップ" width="0" height="0" src=""/>
+      <div class="Marker" style="top:0px;left:0px;position:absolute;">
+        <img src="https://img.atwiki.jp/pcro/attach/170/852/star.png" width="30" height="30" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    //同じ名前のNPCがいる場合は「()」を付けて対応…(「兵士」など)
+    const info = {
+      "NPC":{
+        "ウォールナッツ王国":{
+          //ガトーヴィレッジ
+          "ヴァニラ": {"x":211, "y":186},
+          "コルネ(ガトーヴィレッジ)": {"x":204, "y":147},
+          "チョコラ(ガトーヴィレッジ)": {"x":176, "y":161},
+          "ココヤッツ": {"x":188, "y":154},
+          "ミン(ガトーヴィレッジ)": {"x":183, "y":182},
+          "グリリ(ガトーヴィレッジ)": {"x":233, "y":152},
+          "パセリ(ガトーヴィレッジ)": {"x":216, "y":156},
+          "タピオカ": {"x":231, "y":184},
+          "兵士(ガトーヴィレッジ)": {"x":195, "y":207},
+          "ウィークエンド": {"x":171, "y":215},
+          //ホットケーブ遺跡
+          "兵士(ホットケーブ遺跡)": {"x":292, "y":179},
+          "ビン": {"x":278, "y":135},
+          //アナナス平原
+          "ドーナツ": {"x":94, "y":169},
+          "ジェノワ": {"x":108, "y":214},
+          "オギー": {"x":49, "y":160},
+          "ヴァグラント": {"x":244, "y":66},
+          //サブリーナ平原
+          "グラッセ": {"x":195, "y":292},
+          "アヴリル": {"x":109, "y":332},
+          "兵士(サブリーナ平原)": {"x":191, "y":415},
+          "ナポリタン": {"x":222, "y":392},
+          "カカオ": {"x":237, "y":514},
+          "エッセンス": {"x":232, "y":514},
+          "ジェイガー": {"x":235, "y":326},
+          //ザラメブルグ
+          "マフィン": {"x":209, "y":400},
+          "クロカンブッシュ(ザラメブルグ)": {"x":210, "y":415},
+          "ロア(ザラメブルグ)": {"x":248, "y":393},
+          "シナモン": {"x":228, "y":427},
+          "フラッペ": {"x":224, "y":397},
+          "トリュフ": {"x":213, "y":417},
+          "ドルチェ(ザラメブルグ)": {"x":265, "y":415},
+          "クリーム": {"x":295, "y":440},
+          "ラング": {"x":307, "y":413},
+          "兵士(ザラメブルグ)": {"x":191, "y":468},
+          "ガム(ザラメブルグ)": {"x":233, "y":448},
+          "サルミアッキ": {"x":228, "y":448},
+          //タルドランド遺跡
+          "クラッカー(タルドランド遺跡)": {"x":358, "y":504},
+          //マーブル平原
+          "チップス": {"x":272, "y":329},
+          "遺跡の杜人": {"x":323, "y":336},
+          "チュロス": {"x":375, "y":303},
+          "兵士(マーブル平原)": {"x":488, "y":311},
+          "サクット": {"x":400, "y":544},
+          "コリアンダー(マーブル平原)": {"x":451, "y":474},
+          //ラスクドルグ鉱山
+          "グロッギー": {"x":421, "y":339},
+          "鉱山士(1,ラスクドルグ鉱山)": {"x":376, "y":353},
+          "鉱山士(2,ラスクドルグ鉱山)": {"x":454, "y":332},
+          "鉱山士(3,ラスクドルグ鉱山)": {"x":444, "y":377},
+          "鉱山士(4,ラスクドルグ鉱山)": {"x":423, "y":351},
+          //王宮
+          "スコーン": {"x":467, "y":123},
+          "コリアンダー(王宮)": {"x":504, "y":120},
+          "スノッブ": {"x":486, "y":90},
+          "シャルロット": {"x":480, "y":111},
+          "フランボワーズ": {"x":490, "y":111},
+          "トルテ": {"x":475, "y":103},
+          "モモ": {"x":496, "y":103},
+          "貴族(1,王宮)": {"x":462, "y":83},
+          "貴族(2,王宮)": {"x":506, "y":83},
+          "兵士(1,王宮)": {"x":482, "y":81},
+          "兵士(2,王宮)": {"x":488, "y":81},
+          "兵士(3,王宮)": {"x":487, "y":182},
+          "カムリ(王宮)": {"x":503, "y":125},
+        },
+        "イートゥミー島":{
+          "ロア(イートゥミー島)": {"x":614, "y":565},
+          "ミント(イートゥミー島)": {"x":456, "y":496},
+          "グルル(イートゥミー島)": {"x":458, "y":506},
+          "フロランタン": {"x":454, "y":484},
+          "シブースト": {"x":486, "y":499},
+          "キプフェル": {"x":491, "y":488},
+        },
+        "ウヰローネ島":{
+          "ロア(ウヰローネ島)": {"x":614, "y":55},
+          "カノコ": {"x":602, "y":558},
+          "モーナッカ": {"x":600, "y":543},
+          "ミント(ウヰローネ島)": {"x":582, "y":539},
+          "マンジュー": {"x":586, "y":539},
+          "カリント": {"x":573, "y":560},
+          "ダイフク": {"x":559, "y":570},
+          "ガシモン": {"x":514, "y":538},
+          "チャモン": {"x":514, "y":538},
+          "ジンジャー": {"x":439, "y":566},
+        },
+        "ウヰローネ城内":{
+          "ベニフク": {"x":389, "y":404},
+          "カマド": {"x":403, "y":398},
+          "チマキ": {"x":393, "y":396},
+          "サオデア": {"x":415, "y":392},
+          "トゥリモ": {"x":397, "y":489},
+        },
+        "ビスケッティオ":{
+          "ロア(ビスケッティオ)": {"x":545, "y":654},
+          "１号さん": {"x":502, "y":654},
+          "２号さん": {"x":552, "y":601},
+          "３号さん": {"x":474, "y":609},
+          "カナッペ": {"x":498, "y":579},
+          "スプモーネ": {"x":474, "y":581},
+          "パブロバ": {"x":496, "y":597},
+          "ミント(ビスケッティオ)": {"x":502, "y":612},
+          "グレレ(ビスケッティオ)": {"x":483, "y":618},
+        },
+        "グラニテ氷間":{
+          "ハロハロ": {"x":440, "y":499},
+          "パンヌカック": {"x":504, "y":538},
+          "マーサ": {"x":524, "y":535},
+          "スムージー": {"x":538, "y":536},
+          "ジェラート": {"x":557, "y":540},
+          "ドゥルマ": {"x":572, "y":554},
+          "ミント(グラニテ氷間)": {"x":535, "y":547},
+          "グヌヌ(グラニテ氷間)": {"x":521, "y":547},
+          "カチャン": {"x":585, "y":539},
+          "シャーベット": {"x":593, "y":542},
+          "クルフィ": {"x":549, "y":611},
+          "バスタニ": {"x":542, "y":689},
+          "ロア(グラニテ氷間)": {"x":412, "y":534},
+        },
+        "エクレアールランド":{
+          "ロア(エクレアールランド)": {"x":641, "y":510},
+          "プラリネ": {"x":609, "y":510},
+          "レチェ": {"x":599, "y":502},
+          "ボンボン": {"x":600, "y":519},
+          "チョコラ(エクレアールランド)": {"x":578, "y":543},
+          "ドデカボチャ": {"x":571, "y":484},
+          "ジャンドゥヤ": {"x":612, "y":528},
+          "カンノール": {"x":603, "y":485},
+          "オリボレン": {"x":597, "y":533},
+          "シュネッケ": {"x":590, "y":490},
+          "モーナッカ(エクレアールランド)": {"x":574, "y":511},
+          "ギザーダ": {"x":612, "y":547},
+          "アクション同盟員": {"x":603, "y":551},
+        },
+        "キャンディーヌ島":{
+          "ロア(キャンディーヌ島)": {"x":602, "y":539},
+          "ミント(キャンディーヌ島)": {"x":539, "y":563},
+          "グリリ(キャンディーヌ島)": {"x":556, "y":491},
+          "アドヴォカート": {"x":562, "y":516},
+          "ジンリッキー": {"x":569, "y":531},
+          "コルコバード": {"x":531, "y":531},
+          "スティンガー": {"x":537, "y":522},
+          "スプリッツァー": {"x":565, "y":454},
+        },
+        "クランペット学園":{
+          "ロア(クランペット学園)": {"x":475, "y":353},
+          "レガドール": {"x":479, "y":414},
+          "トゥワ": {"x":463, "y":463},
+          "レト": {"x":418, "y":479},
+          "アタンデ": {"x":417, "y":478},
+          "イルマ": {"x":397, "y":474},
+          "ブラト": {"x":396, "y":473},
+          "パレストラ": {"x":405, "y":399},
+          "ウーツェン": {"x":399, "y":358},
+          "ガム(クランペット学園)": {"x":456, "y":391},
+        },
+        "港街メロマカロナ":{
+          "ロア(港街メロマカロナ)": {"x":268, "y":715},
+          "クスス": {"x":285, "y":687},
+          "モルガン": {"x":260, "y":680},
+          "ドゥカン": {"x":279, "y":737},
+          "フンジー": {"x":301, "y":676},
+          "チャナ": {"x":268, "y":669},
+          "ファラフェル": {"x":235, "y":835},
+          "ガルバンゾ": {"x":220, "y":832},
+        },
+        "崩壊世界":{
+          //ガトーヴィレッジ
+          "コルネ(崩壊世界)": {"x":204, "y":147},
+          "黄金の羽(崩壊世界-ガトーヴィレッジ)": {"x":227, "y":159},
+          "コリアンダー(崩壊世界)": {"x":232, "y":161},
+          "カムリ(崩壊世界)": {"x":238, "y":158},
+          "ルクシオン": {"x":174, "y":174},
+          //ホットケーブ遺跡
+          "チュイール": {"x":279, "y":185},
+          //アナナス平原
+          "黄金の羽(崩壊世界-アナナス平原)": {"x":88, "y":100},
+          "ミント(崩壊世界)": {"x":82, "y":101},
+          "パセリ(崩壊世界)": {"x":88, "y":108},
+          "ノーム": {"x":77, "y":135},
+          "ウルディナ": {"x":108, "y":185},
+          "シルキー": {"x":145, "y":140},
+          "イフリン": {"x":195, "y":116},
+          //建造物
+          "旧・水のイド": {"x":70, "y":248},
+          "旧・風のイド": {"x":237, "y":126},
+          "旧・地のイド": {"x":195, "y":247},
+          "旧・火のイド": {"x":271, "y":130},
+          "水のイド": {"x":109, "y":185},
+          "風のイド": {"x":145, "y":141},
+          "地のイド": {"x":77, "y":134},
+          "火のイド": {"x":196, "y":116},
+        },
+        "ミルフィーナ":{
+          "コリアンダー(ミルフィーナ)": {"x":304, "y":536},
+          "バームクーヘン": {"x":304, "y":530},
+          "ココア": {"x":349, "y":547},
+          "パンナコッタ": {"x":380, "y":509},
+          "ジャム": {"x":368, "y":515},
+          "パセリ(ミルフィーナ)": {"x":355, "y":516},
+          "カルボー": {"x":390, "y":497},
+          "サヴォア": {"x":380, "y":491},
+          "オシャレ同盟員(ミルフィーナ)": {"x":375, "y":517},
+          "スタイリスト(ミルフィーナ)": {"x":349, "y":503},
+          "トゥルトゥー(ミルフィーナ)": {"x":358, "y":539},
+          "コフィ": {"x":364, "y":510},
+          "クロワッサン": {"x":337, "y":493},
+          "アプリコット": {"x":339, "y":492},
+          "ブラウニー": {"x":323, "y":508},
+          "シロップ": {"x":325, "y":507},
+          "スフレ": {"x":407, "y":502},
+          "ラード": {"x":384, "y":457},
+          "ネージュ(ミルフィーナ)": {"x":295, "y":515},
+          "バクラヴァ": {"x":235, "y":543},
+          "チャツネ": {"x":446, "y":629},
+          "ディライト": {"x":429, "y":386},
+          "チュップ": {"x":464, "y":326},
+          "チャナイ": {"x":466, "y":303},
+          "ロゼッタ": {"x":737, "y":308},
+          "パネットーネ": {"x":745, "y":321},
+        },
+        "ミルクハイム":{
+          //市街区・南
+          "ボンボリーノ": {"x":849, "y":539},
+          "トラヒゲInc.(ミルクハイム-市街区・南)": {"x":853, "y":528},
+          "ババロア": {"x":854, "y":508},
+          "グミミ(ミルクハイム)": {"x":858, "y":508},
+          //市街区・中央
+          "ネージュ(ミルクハイム)": {"x":881, "y":480},
+          "パルフェ": {"x":836, "y":468},
+          "ポロネーゼ": {"x":800, "y":453},
+          "マンジェ": {"x":811, "y":437},
+          "フール": {"x":851, "y":421},
+          "マッチャ": {"x":831, "y":425},
+          //市街区・北
+          "ティラミス": {"x":879, "y":412},
+          "トラヒゲInc.(ミルクハイム-市街区・北)": {"x":872, "y":398},
+          "クリスプ": {"x":867, "y":375},
+          "サンデー": {"x":856, "y":381},
+          "ブルトン": {"x":841, "y":369},
+          "クロカンブッシュ(ミルクハイム)": {"x":842, "y":382},
+          //市街区・西
+          "サヴァラン": {"x":720, "y":432},
+          "コリアンダー(ミルクハイム)": {"x":781, "y":430},
+          "パセリ(ミルクハイム)": {"x":753, "y":442},
+          "ホームポイント(ミルクハイム)": {"x":734, "y":422},
+          //コンポート平原
+          "シュトルーデル": {"x":702, "y":439},
+          "ラクヴィチカ": {"x":613, "y":416},
+          "パパナシ": {"x":621, "y":407},
+          "マダールティ": {"x":609, "y":291},
+          "レヴァネ": {"x":607, "y":527},
+        },
+        "クッキード鉱道":{
+          "ボネット": {"x":468, "y":616},
+          "シュークリム": {"x":462, "y":585},
+          "セミフリオ": {"x":428, "y":575},
+          "メルバ": {"x":499, "y":557},
+          "シュトロイゼル": {"x":501, "y":508},
+          "フロニャルド": {"x":504, "y":442},
+          "トロッコ" : {"x":470, "y":605},
+        },
+        "プディング深森１層":{
+          "ドルチェ(プディング深森１層)": {"x":285, "y":245},
+          "リヨン": {"x":286, "y":250},
+          "サントノーレ": {"x":289, "y":245},
+          "トラヒゲInc.(プディング深森１層)": {"x":278, "y":242},
+          "２層入口(１層側)": {"x":379, "y":304},
+        },
+        "プディング深森２層":{
+          "クグロフ": {"x":283, "y":256},
+          "１層入口(２層側)": {"x":380, "y":307},
+          "３層入口(２層側)": {"x":352, "y":321},
+        },
+        "プディング深森３層":{
+          "２層入口(３層側)": {"x":337, "y":333},
+        },
+        "ルートビア(地上)":{
+          //レモネード海岸
+          "カスタード": {"x":548, "y":588},
+          //シードル草原(無し)
+          //潮騒の町ルートビア
+          "ズッコット": {"x":603, "y":536},
+          "タフィー": {"x":568, "y":516},
+          "アンゼリカ": {"x":550, "y":519},
+          "ゴーフレッド": {"x":512, "y":489},
+          "ファッジ": {"x":498, "y":494},
+          "ベニエ": {"x":514, "y":501},
+          "パンドーロ": {"x":517, "y":506},
+          "ポップコーン": {"x":505, "y":513},
+          "ロリポップ": {"x":532, "y":470},
+          "マジパン": {"x":518, "y":464},
+          "モンブラン": {"x":514, "y":531},
+          "ホームポイント": {"x":505, "y":491},
+          //"ドロップ": {"x":0, "y":0},
+          //ジンジャエル池畔
+          "ギモーヴ": {"x":438, "y":529},
+          "クラッカー(ルートビア)": {"x":401, "y":546},
+        },
+        "ルートビア(海中)":{
+          //サイダー台地
+          "パルミエ": {"x":483, "y":525},
+          "デクス": {"x":488, "y":546},
+          "ポルボロン": {"x":551, "y":527},
+        },
+        "猫想郷フィニャンシェ":{
+          "ケット党員5656号": {"x":158, "y":179},
+          "ケット党員222号": {"x":168, "y":180},
+          "ツォンズ": {"x":157, "y":169},
+          "オーギョーチ": {"x":174, "y":164},
+          "ブ・リュレー": {"x":143, "y":138},
+          "トゥルトゥー(猫想郷フィニャンシェ)": {"x":145, "y":111},
+          "グレレ(猫想郷フィニャンシェ)": {"x":171, "y":120},
+          "グルル(猫想郷フィニャンシェ)": {"x":173, "y":121},
+          "グヌヌ(猫想郷フィニャンシェ)": {"x":180, "y":127},
+          "グリリ(猫想郷フィニャンシェ)": {"x":188, "y":138},
+          "ゴマタマ": {"x":164, "y":122},
+          "トラヒゲ商会(猫想郷フィニャンシェ)": {"x":174, "y":119},
+          "ゲッペイ": {"x":186, "y":123},
+          "ネージュ(猫想郷フィニャンシェ)": {"x":183, "y":149},
+          "ジャンプ台(猫想郷フィニャンシェ)": {"x":187, "y":150},
+          "オシャレ同盟員(猫想郷フィニャンシェ)": {"x":154, "y":125},
+          "スタイリスト(猫想郷フィニャンシェ)": {"x":154, "y":120},
+          "アンニン": {"x":160, "y":114},
+          "マーラカオ": {"x":185, "y":135},
+        },
+      },
+      "ボスケモノ":{
+        "ウォールナッツ王国":{
+          "アオミドリ": {"x":290, "y":112},
+          "モサモサピテクス": {"x": 191, "y":415},
+          "モゲッチ": {"x":367, "y":343},
+        },
+        "ミルフィーナ":{
+          "グルー・ビー": {"x":670, "y":269},
+          "ゴーマンドラ": {"x":171, "y":807},
+        },
+        "ミルクハイム":{
+          "スレープニル": {"x":642, "y":621},
+        },
+        "プディング深森３層":{
+          "ミス・ホー": {"x":371, "y":305},
+        },
+        "クッキード鉱道":{
+          "エックス": {"x":577, "y":422},
+        },
+        "キャンディーヌ島":{
+          "ツキニーホエール": {"x":501, "y":498},
+        },
+        "ウヰローネ城内":{
+          "ショニオーガ": {"x":397, "y":489},
+        },
+      },
+      "フィールドボス":{
+        "ウォールナッツ王国":{
+          "ガルルプス": {"x":99, "y":74},
+          "キロハーミン": {"x":100, "y":419},
+          "ウルル": {"x":172, "y":334},
+          "マッシロコダイ": {"x":428, "y":560},
+          "アインチュータイン(フィールドボス)": {"x":400, "y":210},
+        },
+        "ウヰローネ島":{
+          "アバレウンギャオォ": {"x":446, "y":549},
+        },
+        "ビスケッティオ":{
+          "アレクサンドモス(東-Lv53)": {"x":615, "y":605},
+          "アレクサンドモス(北西-Lv87)": {"x":610, "y":525},
+        },
+        "崩壊世界":{
+          "バックベアロイド(ホットケープ遺跡南)": {"x":270, "y":270},
+          "バックベアロイド(アナナス平原・北,浮島)": {"x":113, "y":88},
+        },
+        "ミルフィーナ":{
+          "スカーレッコダイン": {"x":424, "y":501},
+          "マンドラゴケ": {"x":459, "y":332},
+          "マンモスドラゴケ": {"x":447, "y":179},
+          "モゲラッポ": {"x":457, "y":314},
+        },
+        "ミルクハイム":{
+          "ハグレルビー(中央高台-Lv130)": {"x":620, "y":477},
+          "ハグレルビー(北北西-Lv148)": {"x":552, "y":218},
+          "ギルガメッチュー(南西-Lv125)": {"x":576, "y":528},
+          "ギルガメッチュー(中央高台-Lv140)": {"x":614, "y":454},
+          "アルカンチュール(北北西-Lv128)": {"x":530, "y":285},
+          "アルカンチュール(鉱山-Lv145)": {"x":609, "y":407},
+          "ハグレシトリン": {"x":562, "y":432},
+        },
+        "プディング深森１層":{
+          "キングノヅラー": {"x":230, "y":290},
+        },
+        "プディング深森２層":{
+          "マホノヅラー": {"x":226, "y":179},
+        },
+        "プディング深森３層":{
+          "ハエトリーナ": {"x":315, "y":204},
+        },
+      },
+      "時間湧きボス":{
+        "ウォールナッツ王国":{
+          "アインチュータイン(時間湧きボス)": {"x":409, "y":433},
+          "マハーラードラコ": {"x":409, "y":433},
+          "ケルブマシーン": {"x":409, "y":433},
+          "クイーンヨーカン": {"x":446, "y":386},
+        },
+        "崩壊世界":{
+          "ワァンイト": {"x":202, "y":58},
+          "ガリガリアテ": {"x":202, "y":58},
+        },
+        "ミルフィーナ":{
+          "プレジドランコ": {"x":437, "y":594},
+          "チャトリュフビッグ": {"x":539, "y":669},
+          "サイデッカー": {"x":539, "y":669},
+          "メガッチョ": {"x":562, "y":190},
+          "ドラーチェ": {"x":562, "y":190},
+          "オーキ": {"x":562, "y":190},
+          "マッターホーン": {"x":287, "y":954},
+          "ミツリンハーミン": {"x":287, "y":954},
+        },
+        "ミルクハイム":{
+          "ディワンゴ": {"x":484, "y":449},
+          "チューワロフスキー": {"x":484, "y":449},
+          "エンキチュー": {"x":484, "y":449},
+        },
+        "プディング深森１層":{
+          "ミルク・ロポップ(１層-Lv140)": {"x":294, "y":238},
+        },
+        "プディング深森２層":{
+          "ミルク・ロポップ(２層-Lv150)": {"x":321, "y":169},
+        },
+        "プディング深森３層":{
+          "ミルク・ロポップ(３層-Lv160)": {"x":346, "y":231},
+        },
+        "ルートビア(海中)":{
+          "オクトモナーク(海底都市ガラナ廃塔-Lv154)": {"x":528, "y":495},
+          "オクトモナーク(海底都市ガラナ廃塔-Lv165)": {"x":528, "y":495},
+        },
+      }
+    }
+  </script>
+
+  <script>
+    /*
+      プレイヤー目線でのborder
+      ゲーム内で、マップ上において東西南北で最も「出っ張った」地形に行ってそこの座標をメモする。マップ画像もこのborderに対応させるようにトリミングする。
+      これによりマーカーの座標計算が正確・簡単になる。
+
+
+
+
+      マップ追加のためにこのborderを調べる必要あり
+
+
+
+    */
+    //constMapWidthの数値が、マップがウィンドウに表示される際の大きさとなる
+    const constMapWidth = 400;
+    const worldBorder = {
+      "ウォールナッツ王国": {
+        "left":4, "right":560, "top":23, "bottom":571
+      },
+      "イートゥミー島":{
+        "left":402, "right":658, "top":432, "bottom":604
+      },
+      "ウヰローネ島":{
+        "left":420, "right":637, "top":441, "bottom":647
+      },
+      /*
+      "ウヰローネ城内":{
+        "left":0, "right":0, "top":0, "bottom":0
+      },
+      */
+      "ビスケッティオ":{
+        "left":432, "right":636, "top":461, "bottom":681
+      },
+      "グラニテ氷間":{
+        "left":397, "right":657, "top":354, "bottom":691
+      },
+      /*
+      "エクレアールランド":{
+        "left":0, "right":0, "top":0, "bottom":0
+      },
+      */
+      "キャンディーヌ島":{
+        "left":473, "right":611, "top":433, "bottom":601
+      },
+      "クランペット学園":{
+        "left":394, "right":492, "top":351, "bottom":480
+      },
+      "港街メロマカロナ":{
+        "left":244, "right":315, "top":657, "bottom":743
+      },
+      "崩壊世界":{
+        "left":4, "right":378, "top":23, "bottom":285
+      },
+      "ミルフィーナ": {
+        "left":138, "right":784, "top":168, "bottom":985
+      },
+      "ミルクハイム": {
+        "left":467, "right":982, "top":209, "bottom":651
+      },
+      /*
+      "クッキード鉱道":{
+        "left":0, "right":0, "top":0, "bottom":0
+      },
+      */
+      "プディング深森１層":{
+        "left":196, "right":411, "top":152, "bottom":360
+      },
+      "プディング深森２層":{
+        "left":203, "right":409, "top":144, "bottom":358
+      },
+      "プディング深森３層":{
+        "left":181, "right":403, "top":135, "bottom":356
+      },
+      "ルートビア(地上)": {
+        "left":380, "right":657, "top":414, "bottom":652
+      },
+      "ルートビア(海中)": {
+        "left":452, "right":572, "top":474, "bottom":591
+      },
+      "猫想郷フィニャンシェ": {
+        "left":75, "right":272, "top":78, "bottom":266
+      },
+    };
+  </script>
+  <script>
+    //atwikiにアップロードしたマップ画像を差し替えたりした際は、ここの値も変更してください
+    const mapImgURLNumber = {
+      "ウォールナッツ王国": 853,
+      "イートゥミー島": 854,
+      "ウヰローネ島": 855,
+      //"ウヰローネ城内": 0,
+      "ビスケッティオ": 856,
+      "グラニテ氷間": 857,
+      //"エクレアールランド": 0,
+      "キャンディーヌ島": 858,
+      "クランペット学園": 859,
+      "港街メロマカロナ": 860,
+      "崩壊世界": 861,
+      "ミルフィーナ": 862,
+      "ミルクハイム": 863,
+      //"クッキード鉱道": 0,
+      "プディング深森１層": 864,
+      "プディング深森２層": 865,
+      "プディング深森３層": 866,
+      "ルートビア(地上)": 867,
+      "ルートビア(海中)": 868,
+      "猫想郷フィニャンシェ": 869,
+    }
+  </script>
+
+  <script>
+    /*
+      「座標から」のプルダウン設定用(class="SearchFromCoordinate")
+      ページ表示時のみ勝手に実行される。
+    */
+    const setNPCorBOSS = () => {
+      const NPCorBOSSElement = document.querySelector("li.SearchFromCoordinate > div > select.NPCorBOSS");
+      NPCorBOSSElement.innerHTML = '<option value="">-</option>';
+      for (let key in worldBorder){
+        NPCorBOSSElement.innerHTML += '<option value="'+key+'">'+key+'</option>';
+      }
+    };
+    setNPCorBOSS();
+  </script>
+
+  <script>
+    /*
+      「NPC・ボスケモノから」のプルダウン設定用(class="Sequence")
+      orderの値によって次に設定されるプルダウン要素が決定される
+        orderの値: World, Name, Search(button)のいずれか。
+        orderより階層的に下位のプルダウン(WorldよりNameが下位など)は初期化される。
+    */
+    const setSequence = (props) => {
+      const order = props.order;
+      //queryが途中まで同じなのでconstで抽出して使う
+      const sequenceElement = document.querySelector("li.SearchFromName > div > div.Sequence");
+      if(order === "World"){
+        //いまNPCorBOSSまで選択されてるので、1個下のWorldの候補を設定(および初期化)。2個下のName、3個下のSearch(button)は非表示。
+        const NPCorBOSS = sequenceElement.querySelector(":scope > select.NPCorBOSS").value;
+        let worldElement = sequenceElement.querySelector(":scope > select.World");
+        if(NPCorBOSS !== ""){
+          worldElement.innerHTML = "<option value=''>-</option>";
+          Object.keys(info[NPCorBOSS]).forEach((key)=>{
+            worldElement.innerHTML += "<option value="+key+">"+key+"</option>";
+          });
+          //World:表示、Name:非表示、Search(button):非表示。
+          worldElement.style.display = "block";
+        }else{
+          worldElement.style.display = "none";
+        }
+        sequenceElement.querySelector(":scope > select.Name").style.display = "none";
+        sequenceElement.querySelector(":scope > button.Search").style.display = "none";
+      }else if(order === "Name"){
+        //いまWorldまで選択されてるので、1個下のNameの候補を設定(および初期化)。2個下のSearch(button)は非表示。
+        const NPCorBOSS = sequenceElement.querySelector(":scope > select.NPCorBOSS").value;
+        const world = sequenceElement.querySelector(":scope > select.World").value;
+        const nameElement = sequenceElement.querySelector(":scope > select.Name");
+        if(world !== ""){
+          nameElement.innerHTML = "<option value=''>-</option>";
+          let omitNameDict = {};
+          Object.keys(info[NPCorBOSS][world]).forEach((key)=>{
+            const name = omitName(key);
+            if(omitNameDict[name] == null){
+              omitNameDict[name] = 1;
+            }else{
+              omitNameDict[name] += 1;
+            }
+          });
+          Object.keys(info[NPCorBOSS][world]).forEach((key)=>{
+            if(omitNameDict[omitName(key)] !== 1){
+              nameElement.innerHTML += "<option value="+key+">"+key+"</option>";
+            }else{
+              nameElement.innerHTML += "<option value="+key+">"+omitName(key)+"</option>";
+            }
+          });
+          //Name:表示、Search(button):非表示。
+          //上位のWorldは既に表示されてる。
+          nameElement.style.display = "block";
+        }else{
+          nameElement.style.display = "none";
+        }
+        sequenceElement.querySelector(":scope > button.Search").style.display = "none";
+      }else if(order === "Search"){
+        ///全てのプルダウンで値が選択されていたら、「調べる」ボタンを表示する。
+        const NPCorBOSS = sequenceElement.querySelector(":scope > select.NPCorBOSS").value;
+        const world = sequenceElement.querySelector(":scope > select.World").value;
+        const name = sequenceElement.querySelector(":scope > select.Name").value;
+        if(NPCorBOSS !== "" && world !== "" && name !== ""){
+          sequenceElement.querySelector(":scope > button.Search").style.display = "block";
+        }else{
+          sequenceElement.querySelector(":scope > button.Search").style.display = "none";
+        }
+      }
+    }
+  </script>
+
+  <script>
+    const search = (props) => {
+      const type = props.type;
+      //座標から検索する場合
+      if(type === "SearchFromCoordinate"){
+        //console.log("type: SearchFromCoordinate");
+        const world = document.querySelector("li.SearchFromCoordinate > div > select.NPCorBOSS").value;
+        const errorElement = document.querySelector("li.SearchFromCoordinate > div > div.ErrorMessage > font");
+        if(world !== ""){
+          const x = Number(document.querySelector("li.SearchFromCoordinate > div >input.x").value);
+          const y = Number(document.querySelector("li.SearchFromCoordinate > div >input.y").value);
+          const border = worldBorder[world];
+          //画面で表示するマップ外の座標を入力されたらエラーとする
+          if(border.left <= x && x <= border.right && border.top <= y && y <= border.bottom){
+            //console.log("world: "+world+", ("+x+", "+y+")");
+            //ユークリッド距離で一番近いNPC・ボスケモノの名前を計算
+            const name = nearestSomeone({"world":world, "x":x, "y":y});
+            const memo = document.querySelector("div.Result > div.Memo");
+            //もし指定した座標に十分に近いNPC・ボスケモノが存在する場合、その名前も参考程度に表示。
+            memo.innerHTML = "("+x+", "+y+")は<font color='yellow'>★</font>の位置です<br/>"
+            if(name !== ""){
+              const newName = omitName(name);
+              memo.innerHTML += "一番近くにいるのは"+newName+"です";
+            }else{
+              memo.innerHTML += "<br/>";
+            }
+            //マップを表示
+            mapping({"world":world, "x":x, "y":y});
+            errorElement.innerHTML = "<br/>";
+          }else{
+            //console.log("座標を入力してね");
+            errorElement.innerHTML = "適切な座標にしてね<br/>";
+            errorElement.innerHTML += "("+border.left+"~"+border.right+", "+border.top+"~"+border.bottom+")";
+          }
+        }else{
+          //console.log("ワールドを選んでね");
+          errorElement.innerHTML = "ワールドを選んでね";
+        }
+      }
+      //NPC・ボスケモノ名から検索する場合
+      else{
+        const method = props.method;
+        //NPC・ボスケモノ名を手入力してもらった場合
+        if(method === "Manual"){
+          //console.log("type: SearchFromName, method: Manual");
+          const yourName = document.querySelector("li.SearchFromName > div > div.Manual > form > input.Name").value;
+          const errorElement = document.querySelector("li.SearchFromName > div > div.Manual > div.ErrorMessage > font");
+          if(yourName !== ""){
+            const Katakana = (str) => {
+              return str.replace(/[\u3041-\u3096]/g, function(match) {
+                var chr = match.charCodeAt(0) + 0x60;
+                return String.fromCharCode(chr);
+              });
+            };
+            const katakanaName = Katakana(yourName);
+            let result = null;
+            //nameListは検索で複数候補があった場合用
+            let nameList = [];
+            //NPCorBOSS, world, nameはkeyとしても扱える
+            for (let NPCorBOSS in info){
+              for (let world in info[NPCorBOSS]){
+                for (let name in info[NPCorBOSS][world]){
+                  //見つけた場合は結果をresultに入れる
+                  if((katakanaName.includes("(") ? name : omitName(omitName(name))).includes(katakanaName) ){
+                    const coordinate = info[NPCorBOSS][world][name];
+                    const [x, y] = [Number(coordinate.x), Number(coordinate.y)];
+                    result = {"world":world, "name":name, "x":x, "y":y};
+                    nameList.push(name)
+                  }
+                }
+              }
+            }
+            const memo = document.querySelector("div.Result > div.Memo");
+            //1つ以上の検索結果がある場合
+            if(result !== null){
+              //1つの検索結果がある場合
+              if(nameList.length === 1){
+                const [world,name,x,y] = [result.world,result.name,result.x, result.y];
+                const newName = omitName(name);
+                //console.log(name+" は"+world+"の("+x+", "+y+")にいます")
+                memo.innerHTML = newName+" は"+world+"の("+x+", "+y+")にいます";
+                //マップを表示
+                mapping({"world":world, "x":x, "y":y});
+              }
+              //複数の検索結果がある場合(nameList>1)
+              else{
+                //console.log(nameList.length+"個の検索結果があります")
+                memo.innerHTML = "<h4>複数の候補があります</h4>"
+                for (let i=0;i<nameList.length;i++){
+                  const htmlStr = '・<input type="button" value="'+nameList[i]+'" onclick="reSearch(this.value)" /><br/>';
+                  //console.log(htmlStr)
+                  memo.innerHTML += htmlStr;
+                }
+                document.querySelector("div.Result").style.display = "block";
+                document.querySelector("div.Result > div.Map").style.display = "none";
+              }
+              errorElement.innerHTML = "<br/>";
+            }else{
+              errorElement.innerHTML = yourName+" は見つかりませんでした";
+            }
+          }else{
+            //console.log("名前を入力してね")
+            errorElement.innerHTML = "名前を入力してね";
+          }
+        }
+        //NPC・ボスケモノをプルダウンで選択してもらった場合
+        else if(method === "Sequence"){
+          //console.log("type: SearchFromName, method: Sequence");
+          //NPC・ボスケモノのどちらであるか、ワールド名、NPC名を取得
+          const NPCorBOSS = document.querySelector("li.SearchFromName > div > div.Sequence > select.NPCorBOSS").value;
+          const world = document.querySelector("li.SearchFromName > div > div.Sequence > select.World").value;
+          const name = document.querySelector("li.SearchFromName > div > div.Sequence > select.Name").value;
+          const newName = omitName(name);
+          //console.log("["+NPCorBOSS+", "+world+", "+name+"]");
+          const coordinate = info[NPCorBOSS][world][name];
+          const [x, y] = [Number(coordinate.x), Number(coordinate.y)];
+          //console.log(name+"は"+world+"の"+"("+x+", "+y+")にいます");
+          const memo = document.querySelector("div.Result > div.Memo");
+          memo.innerHTML = newName+" は("+x+", "+y+")にいます";
+          //マップを表示
+          mapping({"world":world, "x":x, "y":y});
+        }
+      }
+    };
+    const omitName = (name) => {
+      let newName = name;
+      if(newName.includes("(") && newName.includes(")")){
+        const right = newName.indexOf("(");
+        if(newName.includes("-")){
+          const left = newName.indexOf(")");
+          const hyphen = newName.indexOf("-");
+          newName = newName.substring(0,right)+"("+newName.substring(hyphen+1,left)+")";
+        }else{
+          newName = newName.substring(0,right);
+        }
+      }
+      return newName;
+    };
+    /*
+      NPC・ボスケモノ名を手入力してもらい、複数の検索結果が出た場合用。
+      候補のボタンを押してもらうと、そのボタンにある文字列で再検索を行う。
+    */
+    const reSearch = (name) => {
+      document.querySelector("li.SearchFromName > div > div.Manual > form > input.Name").value = name;
+      search({"type": "SearchFromName", "method": "Manual"});
+    }
+  </script>
+
+  <script>
+    const nearestSomeone = (props) => {
+      //distMax以上の距離はそもそも近くない、とする
+      const distMax = 50;
+      const world = props.world;
+      const x = Number(props.x);
+      const y = Number(props.y);
+      let nearest = {"name":"", "x":0, "y":0, "dist":Infinity};
+      for (let NPCorBOSS in info){
+        //同じworld内でのみ検索
+        for (let name in info[NPCorBOSS][world]){
+          const coordinate = info[NPCorBOSS][world][name];
+          const dist = Math.sqrt((x-coordinate.x)**2 + (y-coordinate.y)**2);
+          if(dist < nearest.dist && dist < distMax){
+            nearest = {"name":name, "x":coordinate.x, "y":coordinate.y, "dist":dist};
+            //console.log(nearest);
+          }
+        }
+      }
+      return nearest.name;
+    };
+  </script>
+
+  <script>
+    /*
+      マップを表示する処理。関数mappingは以下の箇所で呼び出される。
+      座標、名前(手入力)、名前(プルダウン)、onresize(画面サイズ変更時)。
+    */
+    //lastPropsは画面のリサイズ対応用
+    let lastProps = null;
+    let lastSrc = "";
+    const mapping = (props) =>{
+      //props.x, props.yはマーカーの座標計算に用いる
+      const world = props.world;
+      //getBoundingClientRect()をやるために、先にdisplay:blockをする。
+      document.querySelector("div.Result").style.display = "block";
+      document.querySelector("div.Result > div.Map").style.display = "block";
+      //mapとマーカー読み込み
+      const mapImgElement = document.querySelector("div.Result > div.Map > img");
+      const markerElement = document.querySelector("div.Result > div.Map > div.Marker");
+      const markerImgElement = document.querySelector("div.Result > div.Map > div.Marker > img")
+      /*
+
+        mapの大きさを指定、倍率は上のmapRatioで設定
+        実環境ならhttps://…で始まる画像を直接srcに指定できる(ローカルだとダメ)
+        URLの関係上、mapImgURLNumberという辞書にそのマップの番号を保存しておく…(こればかりは画像アップロードしなきゃわからない)
+        (例) https://img.atwiki.jp/pcro/attach/117/305/ミルクハイム.jpg なら『305』を保存。
+        マーカー(星のマーク)もhttpsから始まるURL
+      */
+      //const src = "image\\"+world+".jpg";
+      const src = "https://img.atwiki.jp/pcro/attach/170/"+mapImgURLNumber[world]+"/"+world+".jpg";
+      if(src !== lastSrc){
+        mapImgElement.src = src;
+      }
+      lastSrc = src;
+
+      const border = worldBorder[world];
+      const mapRatio = constMapWidth/(border.right-border.left);
+      mapImgElement.width = parseInt(constMapWidth);
+      mapImgElement.height = parseInt((border.bottom-border.top)*mapRatio);
+      //画面上におけるmapそのものの座標を取得
+      const mapRect = mapImgElement.getBoundingClientRect();
+      //console.log(mapRect.top)
+      //マーカーの初期位置設定および座標計算
+      //画面のスクロール、リサイズにも対応(下のwindow.onresizeがそれ)
+      markerElement.style.left = parseInt(mapRect.left-markerImgElement.width/2+window.pageXOffset+((props.x-border.left)*mapRatio))+"px";
+      markerElement.style.top = parseInt(mapRect.top-markerImgElement.height/2+window.pageYOffset+((props.y-border.top)*mapRatio))+"px";
+      lastProps = props;
+      //console.log("マップを表示")
+    }
+    /*
+      ウィンドウサイズが変更された時の対応用
+      lastPropsに前回検索時のNPC・ボスケモノの座標などが保存されている
+    */
+    window.onresize = () => {
+      if(lastProps != null){
+        mapping(lastProps);
+      }
+    }
+  </script>
+</body>
+
+</html>
