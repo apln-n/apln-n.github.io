@@ -10,8 +10,10 @@
     <div>
       <h3>座標から</h3>
       <!-- その座標から十分に近いNPC・ボスケモノがいるなら、その名前も表示される -->
+      <label>ワールド名: </label><br/>
       <select class="NPCorBOSS"></select>
       <br/><br/>
+      <label>座標: </label><br/>
       (<input class="x" type="number" style="width: 40px"></input>, <input class="y" type="number" style="width: 40px"></input>)
       <button class="Search" onclick="search({type: 'SearchFromCoordinate'})">調べる！</button>
       <div class="ErrorMessage">
@@ -33,7 +35,7 @@
         </div>
       </div>
       <div class="Sequence">
-        <label>絞り込み検索:</label><br/>
+        <label>プルダウンで検索:</label><br/>
         <select class="NPCorBOSS" onchange="setSequence({order:'World'})">
           <option value="">-</option>
           <option value="NPC">NPC</option>
