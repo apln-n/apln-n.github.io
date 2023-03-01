@@ -38,12 +38,19 @@
       </div>
     </div>
     <!-- リザルト画面 -->
-    <div class="game" style="display: none;">
+    <div class="result" style="display: none;">
       <div class="items">
         <!-- #答え、色、自分の色、#自分の回答、その行のスコア -->
-        <!-- スコア……((255*3-(差の絶対値の総和))*(100000/(255*3)), これに全ての行の入力時間もわずかに加味)  -->
         <table>
-          <thead></thead>
+          <thead>
+            <tr>
+              <td></td>
+              <td>答え</td>
+              <td>あなたの色</td>
+              <td></td>
+              <td>スコア</td>
+            </tr>
+          </thead>
           <tbody>
           </tbody>
         </table>
@@ -65,6 +72,8 @@
       }
       const qTitle = document.querySelector(".wrapper > .title")
       const qGame = document.querySelector(".wrapper > .game")
+      const qResult = document.querySelector(".wrapper > .result")
+
       /*
         タイトル画面におけるキー入力
       */
@@ -87,15 +96,23 @@
       */
       else if(isVisible(qGame) && (hexKeys.includes(key) || key=="Backspace") ) {
         hexInput(key)
+        const trs = document.querySelectorAll(".game > .items > table > tbody > tr")
+        if(trs[trs.length-1].querySelector("td > p.p2").textContent.length >= 6){
+          console.log("おわり")
+          qGame.style.display = "none"
+          result()
+          qResult.style.display = "block"
+        }
       }
       else if(isVisible(qGame) && key=="Escape"){
         qGame.style.display = "none"
-        qTitle.style.display = "block"       
+        qTitle.style.display = "block"
       }
       //リザルト画面におけるキー入力
-      /*
-      else if(isVisible(qTitle) && (hexKeys.includes(key) || true) ) {
-      */
+      else if(isVisible(qResult) && ["Escape", "KeyR"].includes(key)) {
+        qResult.style.display = "none"
+        qTitle.style.display = "block"
+      }
       return false; 
     });
   </script>
@@ -108,22 +125,29 @@
       return td
     }
     //ここでランダム色の決定も行う
-    const colorDiv = () => {
+    const colorDiv = (str) => {
       const div = document.createElement("div")
       //16進数
-      const hex = () => { return Math.floor( Math.random()*(255+1) ).toString(16) }
-      div.style.backgroundColor = "#" + hex() + hex() + hex()
+      if(str==""){
+        const hex = () => { return Math.floor( Math.random()*(255+1) ).toString(16) }
+        div.style.backgroundColor = "#" + hex() + hex() + hex()
+      }else{
+        div.style.backgroundColor = str
+      }
       div.style.height = "30px"
       div.style.width = "100px"
-      div.style.border = "1px solid"
-      div.style.borderColor = "#000000";
+      div.style.border = "0px solid"
+      //色の枠を白くした
+      div.style.borderColor = "#FFFFFF";
       div.style.name = "color"
       //時々色が指定されなくなる謎のバグを解消した
       if(div.style.backgroundColor.slice(0,3) == "rgb"){
-        console.log(div.style.backgroundColor)
+        if(str == ""){
+          console.log(div.style.backgroundColor)
+        }
         return div
       }else{
-        return colorDiv()
+        return colorDiv(str)
       }
     }
   </script>
@@ -139,7 +163,7 @@
       for(let i=0;i<tnum;i++){
         const tr = document.createElement("tr")
         tr.className = "tr"+String(i+1)
-        const div1 = colorDiv()
+        const div1 = colorDiv("")
         tr.appendChild(createTd(div1))
         const p1 = document.createElement("p")
         p1.className = "p1"
@@ -159,7 +183,6 @@
 
   <script>
     const hexInput = (key) => {
-      const tnum = Number(document.querySelector(".wrapper > .title > p.p2 > span > .itemNum").textContent)
       const trs = document.querySelectorAll(".game > .items > table > tbody > tr")
       if(hexKeys.includes(key)){
         for(let i=0;i<trs.length;i++){
@@ -183,6 +206,57 @@
             break
           }
         }
+      }
+    }
+  </script>
+
+  <script>
+    const result = () => {
+      const tbody = document.querySelector(".result > .items > table > tbody")
+      //リザルト画面の初期化
+      while(tbody.firstChild){
+        tbody.removeChild(tbody.lastChild)
+      }
+      const gametrs = document.querySelectorAll(".game > .items > table > tbody > tr")
+      const rgb2hex = (rgb) => {
+        return "#" + rgb.map( (value) => {
+          return ("0"+Number(value).toString(16)).slice(-2).toUpperCase()
+        }).join("")
+      }
+
+      //リザルト画面作成
+      /*
+        #答え、色、自分の色、#自分の回答、その行のスコア
+        p1, div1, div2, p2, p3
+        スコア……((255*3-(差の絶対値の総和))*(100000/(255*3)), これに全ての行の入力時間もわずかに加味)
+      */
+      for(let i=0;i<gametrs.length;i++){
+        const tr = document.createElement("tr")
+        tr.className = "tr"+String(i+1)
+        //答え
+        const div1 = gametrs[i].querySelector("td > div")
+        div1.style.marginLeft = "10px"
+        div1.style.marginRight = "10px"
+        const p1 = document.createElement("p")
+        p1.className = "p1"
+        p1.textContent = rgb2hex( div1.style.backgroundColor.slice(4,-1).replace(" ", "").split(",") )
+        tr.appendChild(createTd(p1))
+        tr.appendChild(createTd(div1))
+        //あなたの色
+        const myhex = "#" + gametrs[i].querySelector("td > p.p2").textContent
+        const div2 = colorDiv(myhex)
+        tr.appendChild(createTd(div2))
+        const p2 = document.createElement("p")
+        p2.className = "p2"
+        p2.textContent = myhex
+        p2.style.width = "150px"
+        tr.appendChild(createTd(p2))
+        //スコア
+        const p3 = document.createElement("p")
+        p3.textContent = "10000"
+        tr.appendChild(createTd(p3))
+        tr.style.lineHeight = "10px"
+        tbody.appendChild(tr)
       }
     }
   </script>
