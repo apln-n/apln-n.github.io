@@ -7,3 +7,4 @@
 - [時計](https://apln-n.github.io/pages/tick)
 - [あなたのステータス](https://apln-n.github.io/pages/yourStatus/)
 - [フラクタル](https://apln-n.github.io/pages/fractal/)
+- [カラーコードタイピング](https://apln-n.github.io/pages/ColorCodeTyping/)
