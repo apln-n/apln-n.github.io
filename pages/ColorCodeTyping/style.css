@@ -45,5 +45,6 @@ body{
     100% { background-color: #e74c3c; }
 }
 
-
-
+.result {
+    text-align:right
+}
