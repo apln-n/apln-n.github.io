@@ -27,6 +27,11 @@
     </div>
     <!--ゲーム画面 -->
     <div class="game" style="display: none;">
+      <div class="description">
+        <p>
+          左の色のカラーコード(16進数)を入力してください
+        </p>
+      </div>
       <div class="items">
         <table>
           <!-- 色、#、16進数(テキスト) -->
@@ -39,15 +44,18 @@
     </div>
     <!-- リザルト画面 -->
     <div class="result" style="display: none;">
+      <div class="description">
+        <p>
+          リザルト
+        </p>
+      </div>
       <div class="items">
         <!-- #答え、色、自分の色、#自分の回答、その行のスコア -->
         <table>
           <thead>
             <tr style="text-align: center;">
-              <td></td>
-              <td>答え</td>
-              <td>あなたの色</td>
-              <td></td>
+              <td colspan="2">答え</td>
+              <td colspan="2">あなたの色</td>
               <td>スコア</td>
             </tr>
           </thead>
@@ -63,7 +71,49 @@
           合計: <span></span>
         </p>
       </div>
+      <div class="description">
+        <p>
+          タイトルに戻る: Escキー
+        </p>
+      </div>
     </div>
+  </div>
+  <!-- wrapperの外にkeypadを置いた -->
+  <div class="keypad">
+    <table>
+      <thead></thead>
+      <tbody>
+        <tr>
+          <td><input type="button" class="unique" value="Esc" onclick="keyType('Escape')"  /></td>
+          <td><input type="button" class="unique" value="Start" onclick="keyType('KeyS')"  /></td>
+          <td><input type="button" value="←" onclick="keyType('ArrowLeft')"  /></td>
+          <td><input type="button" value="→" onclick="keyType('ArrowRight')"  /></td>
+        </tr>
+        <tr>
+          <td><input type="button" value="C" onclick="keyType('KeyC')"  /></td>
+          <td><input type="button" value="D" onclick="keyType('KeyD')"  /></td>
+          <td><input type="button" value="E" onclick="keyType('KeyE')"  /></td>
+          <td><input type="button" value="F" onclick="keyType('KeyF')"  /></td>
+        </tr>
+        <tr>
+          <td><input type="button" value="8" onclick="keyType('Digit8')"  /></td>
+          <td><input type="button" value="9" onclick="keyType('Digit9')"  /></td>
+          <td><input type="button" value="A" onclick="keyType('KeyA')"  /></td>
+          <td><input type="button" value="B" onclick="keyType('KeyB')"  /></td>
+        </tr>
+          <td><input type="button" value="4" onclick="keyType('Digit4')"  /></td>
+          <td><input type="button" value="5" onclick="keyType('Digit5')"  /></td>
+          <td><input type="button" value="6" onclick="keyType('Digit6')"  /></td>
+          <td><input type="button" value="7" onclick="keyType('Digit7')"  /></td>
+        </tr>
+        <tr>
+          <td><input type="button" value="0" onclick="keyType('Digit0')"  /></td>
+          <td><input type="button" value="1" onclick="keyType('Digit1')"  /></td>
+          <td><input type="button" value="2" onclick="keyType('Digit2')"  /></td>
+          <td><input type="button" value="3" onclick="keyType('Digit3')"  /></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
 
@@ -78,8 +128,8 @@
     // bonusが発生する1色あたりの最大(平均)許容時間(秒)
     const maxOneColorTime = 10
 
-    document.addEventListener('keydown', (e)=>{
-      const key = e.code
+    document.addEventListener('keydown', (e)=>{ keyType(e.code) })
+    const keyType = (key) => {
       //console.log(key)
       const isVisible = (q) => {
         return ["block", "inline-block"].includes(q.style.display)
@@ -111,7 +161,7 @@
       /*
         ゲーム画面におけるキー入力
       */
-      else if(isVisible(qGame) && (hexKeys.includes(key) || key=="Backspace") ) {
+      else if(isVisible(qGame) && (hexKeys.includes(key) || ["Backspace", "ArrowLeft"].includes(key) ) ) {
         hexInput(key)
         const trs = document.querySelectorAll(".game > .items > table > tbody > tr")
         if(trs[trs.length-1].querySelector("td > p.p2").textContent.length >= 6){
@@ -132,7 +182,7 @@
         qTitle.style.display = "block"
       }
       return false; 
-    });
+    }
 
   </script>
 
@@ -212,6 +262,7 @@
             break
           }
         }
+      // バックスペース。「←」キーでも消える
       }else{
         for(let i=0;i<trs.length;i++){
           const p = trs[i].querySelector("td > p.p2")
@@ -238,7 +289,8 @@
       }
       const gametrs = document.querySelectorAll(".game > .items > table > tbody > tr")
       const rgb2hex = (rgb) => {
-        return "#" + rgb.map( (value) => {
+        const rgbList = (rgb.slice(0,4)!="rgba")? rgb.slice(4,-1).replace(" ", "").split(","): rgb.slice(5,-1).replace(" ", "").split(",").slice(0,3)
+        return "#" + rgbList.map( (value) => {
           return ("0"+Number(value).toString(16)).slice(-2).toUpperCase()
         }).join("")
       }
@@ -266,26 +318,27 @@
       for(let i=0;i<gametrs.length;i++){
         const tr = document.createElement("tr")
         tr.className = "tr"+String(i+1)
+        tr.style.textAlign = "center"
         //答え
         const div1 = gametrs[i].querySelector("td > div")
-        div1.style.marginLeft = "10px"
-        div1.style.marginRight = "10px"
+        div1.style.margin = (window.innerWidth <= 768)? "0 5px": "0 10px"
+        div1.style.width = (window.innerWidth <= 768)? String(parseInt(window.innerWidth/4-70))+"px": "101px"
         const p1 = document.createElement("p")
         p1.className = "p1"
-        p1.textContent = rgb2hex( div1.style.backgroundColor.slice(4,-1).replace(" ", "").split(",") )
+        p1.textContent = rgb2hex( div1.style.backgroundColor )
         hex2rgb(p1.textContent)
         tr.appendChild(createTd(p1))
         tr.appendChild(createTd(div1))
         //あなたの色
         const myhex = "#" + gametrs[i].querySelector("td > p.p2").textContent
         const div2 = colorDiv(myhex)
-        div2.style.marginRight = "10px"
+        div2.style.width = div1.style.width
+        div2.style.margin = div1.style.margin
         tr.appendChild(createTd(div2))
         const p2 = document.createElement("p")
         p2.className = "p2"
         p2.textContent = myhex
-        p2.style.width = "150px"
-        p2.style.textAlign = "left"
+        p2.style.marginRight = (window.innerWidth >= 480)? "50px": "0"
         tr.appendChild(createTd(p2))
         //スコア
         const p3 = document.createElement("p")

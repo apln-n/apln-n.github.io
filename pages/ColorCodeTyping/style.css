@@ -1,30 +1,24 @@
 body{
     height: 90vh;
-    padding: 30px;
+    padding: 0px;
+    margin: 0px;
+    position: relative;
 }
 
 .wrapper {
     border: 1px solid;
     border-radius: 20px;
-    border-color: black; 
-    padding: 20px 50px;
+    border-color: black;
+    margin: 30px;
+    padding: 20px 20px;
     height: 90%;
 }
-/*
-    https://kouhekikyozou.com/css_text_gradation
-*/
-/*
-.title h3 {
-    display: inline-block;
-    background-color: linear-gradient(90deg, #4158D0, #C850C0 30%, #FFCC70);
-    background-color: -webkit-linear-gradient(90deg, #4158D0, #C850C0 30%, #FFCC70);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -moz-background-clip: text;
-    -moz-text-fill-color: transparent;
+
+.title, .game {
+    padding: 0px 20px;
 }
-*/
+
+/* タイトルの色が時間経過で変化する　*/
 .title h3 {
     display: inline-block;
     background-color: #e74c3c;
@@ -47,4 +41,78 @@ body{
 
 .result {
     text-align:right
+}
+.result .description {
+    text-align: left;
+}
+
+@media (min-width:768px){
+    .keypad {
+        display: none;
+    }
+}
+
+@media (max-width:768px){
+    .result {
+        width: 100%;
+    }
+    .result .items table {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+    /*
+        .result .items table tbody tr td (div, p)辺りのサイズは、JavaScriptでウィンドウサイズに応じて自動で設定されるようにした
+    */
+
+    .keypad {
+        display: block;
+        position: absolute;
+        bottom: 0;
+        width: 98%;
+        height: 40%;
+        background-color: darkgray;
+        opacity: 0.8;
+        padding: 1%;
+    }
+    .keypad table {
+        border: none;
+        height: 100%;
+        width: 100%;
+        margin: auto;
+        border-spacing: 0px;   
+    }
+    .keypad table tbody tr td {
+        height: 20%;
+        width: 24%;
+        margin: 0px;
+        padding: 0px;
+        text-align: center;
+    }
+    .keypad table tbody tr td input {
+        padding: 0;
+        margin: 0;
+        height: 90%;
+        width: 90%;
+        font-size: 25px;
+    }
+    .keypad table tbody tr td input.unique {
+        font-size: 20px;
+    }
+}
+@media (max-width:480px){
+    .keypad table tbody tr td input {
+        font-size: 20px;
+    }
+    .keypad table tbody tr td input.unique {
+        font-size: 16px;
+    }
+}
+@media (max-width:320px){
+    .keypad table tbody tr td input {
+        font-size: 16px;
+    }
+    .keypad table tbody tr td input.unique {
+        font-size: 12px;
+    }
 }
