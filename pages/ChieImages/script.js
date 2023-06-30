@@ -42,12 +42,10 @@ const showIframeHref = () => {
     }
     const p = document.querySelector("p.href");
     const as = document.querySelector("p.inner").getElementsByTagName("a")
-    //なぜかfor a in asだとダメ
     p.textContent = "";
     let count=0, i = 0;
     const maxIndex = as.length;
     console.log("length = "+as.length)
-    //aをappendChildするたびにas.lengthが減るので、単純なforループなどを使えない仕様
     for(let i=0;i<as.length;i++){
         console.log("i = " + i)
         if( as[i].href.includes("https://detail.chiebukuro.yahoo.co.jp") ){
@@ -56,10 +54,6 @@ const showIframeHref = () => {
             if(div != null){
                 p.appendChild(div);
                 count++;
-            }
-            //保険
-            if(count >= maxIndex){
-                break;
             }
         }
     }
