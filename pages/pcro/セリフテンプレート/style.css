@@ -92,6 +92,7 @@ label.name {
 label.name input, label.name input::placeholder {
     text-align: center;
     font-size: 2.5vw;
+    font-weight: bold;
     width: 100%;
     height: 100%;
     border: 0;
@@ -124,9 +125,10 @@ label.line {
     overflow:hidden;
 }
 
-label.line label, label.line textarea, label.line textarea::placeholder {
+label.line div, label.line textarea, label.line textarea::placeholder {
     text-align: left;
     font-size: 2.5vw;
+    font-weight: bold;
     resize: none;
     width: 100%;
     border: 0;
@@ -137,9 +139,7 @@ label.line label, label.line textarea, label.line textarea::placeholder {
     text-stroke: 0.07vw var(--textstroke-color);
     vertical-align: top;
 }
-label.line label {
-    display: inline-block;
-    height: 2.5vw;
+label.line div{
     line-height: 2.5vw;
     margin-top: 0.5vw;
 }

@@ -19,5 +19,5 @@ document.querySelector(".avatar-input > input").addEventListener('change', (e) =
 
 // セリフの上の名前を自動的に変更する
 document.querySelector(".name > input").addEventListener('input', (e) => {
-    document.querySelector(".line > label").textContent = e.target.value;
+    document.querySelector(".line > div").textContent = e.target.value;
 });
