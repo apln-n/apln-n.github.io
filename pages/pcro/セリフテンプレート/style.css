@@ -1,0 +1,155 @@
+body, .wrapper {
+    width: 99vw;
+    padding: 0;
+}
+.container {
+    width: 90%;
+    height: 22vw;
+    margin-left: 2%;
+    padding: 0;
+    position: relative;
+}
+
+h3 {
+    margin: 2vw;
+    font-size: 2vw;
+}
+p {
+    margin: 0 2vw;
+    font-size: 1.5vw;
+}
+
+img {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    /*
+        元画像の(width, height): (3203px, 818px)
+        しかしフレキシブル対応のため"vw"で記述。    
+    */
+}
+
+label.avatar-input, label.avatar-display{
+    position: absolute;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 16vw;
+    /* widthとheightを同じ値にする(円を作成) */
+    width: 16vw;
+    height: 16vw;
+    top: 2.5vw;
+    left: 2.7vw;
+    font-size: 2.5vw;
+    padding:0;
+    margin:0;   
+}
+
+label.avatar-input input {
+    display:none;
+}
+label.avatar-display {
+    z-index: -1;
+}
+label.avatar-display label {
+    color: red;
+    opacity: 0.5;
+}
+label.avatar-display img.display {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+label.name {
+    position: absolute;
+    background-color: rgba(0,0,0,0);
+    /* 調整(全部vwを使う) */
+    width: 16.8vw;
+    height: 4.4vw;
+    top: 15.5vw;
+    left: 1.9vw;
+    padding: 0;
+    margin: 0;
+}
+
+label.name input, label.name input::placeholder {
+    text-align: center;
+    font-size: 2.5vw;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background-color: rgba(255,122,155,0);
+    color: #16ef7e;
+    --textstroke-color: #2f793c;
+    -webkit-text-stroke: 0.05vw var(--textstroke-color);
+    text-stroke: 0.05vw var(--textstroke-color);
+    vertical-align: top;/*これが無いとスマホ表示でずれる、以下同様*/
+    
+}
+label.name input:focus {
+    border: 0;
+    outline: 0;
+}
+
+label.line {
+    position: absolute;
+    background-color: rgba(0,0,0,0.45);
+    border-radius: 1.55vw;
+    /* 調整(全部vwを使う) */
+    width: 62.55vw;
+    height: 13.9vw;
+    top: 3.67vw;
+    left: 20.96vw;
+    margin:0;
+    padding: 0.5vw 1vw;
+    overflow:hidden;
+}
+
+label.line label, label.line textarea, label.line textarea::placeholder {
+    text-align: left;
+    font-size: 2.5vw;
+    resize: none;
+    width: 100%;
+    border: 0;
+    background-color: rgba(0,0,0,0);
+    color: #ffffdf;
+    --textstroke-color: #615e3b;
+    -webkit-text-stroke: 0.07vw var(--textstroke-color);
+    text-stroke: 0.07vw var(--textstroke-color);
+    vertical-align: top;
+}
+label.line label {
+    display: inline-block;
+    height: 2.5vw;
+    line-height: 2.5vw;
+    margin-top: 0.5vw;
+}
+label.line textarea {
+    height: 10vw;
+    line-height: 2.5vw;
+    padding: 0;
+}
+label.line textarea:focus {
+    border: 0;
+    outline: 0; 
+}
+
+div.grey {
+    width: 0;
+    height: 0;
+    --length: 1.3vw;
+    border-right: var(--length) solid transparent;
+    border-left: var(--length) solid transparent;
+    border-bottom: var(--length) solid rgba(0,0,0,0.45);
+    border-top: 0;
+    transform: rotate(45deg);
+    z-index: -10000;
+    /* 以下、位置調整 */
+    position: absolute;
+    /* 調整(全部vwを使う) */
+    top: 13.2vw;
+    left: 19.273vw;
+}
