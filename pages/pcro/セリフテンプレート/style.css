@@ -15,11 +15,23 @@ h3 {
     font-size: 2vw;
 }
 p {
-    margin: 0 2vw;
+    margin: 0 0 0 2vw;
     font-size: 1.5vw;
+    line-height: 2vw;
 }
 
-img {
+table {
+    width: 100%;
+}
+table input {
+    display: inline-block;
+    font-size: 1.5vw;
+    line-height: 2vw;
+    padding: 0 2vw;
+    margin: 0 4.5vw 0 0;
+}
+
+.container img {
     position: absolute;
     width: 100%;
     top: 0;
@@ -30,6 +42,10 @@ img {
     */
 }
 
+/*
+    input(file)の見た目を変える
+    参考: https://proengineer.internous.co.jp/content/columnfeature/7605
+*/
 label.avatar-input, label.avatar-display{
     position: absolute;
     border-radius: 50%;
@@ -149,7 +165,6 @@ div.grey {
     z-index: -10000;
     /* 以下、位置調整 */
     position: absolute;
-    /* 調整(全部vwを使う) */
     top: 13.2vw;
     left: 19.273vw;
 }
