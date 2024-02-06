@@ -2,7 +2,7 @@ body, .wrapper {
     width: 99vw;
     padding: 0;
 }
-.container {
+.container, .container2 {
     width: 90%;
     height: 22vw;
     margin-left: 2%;
@@ -167,4 +167,18 @@ div.grey {
     position: absolute;
     top: 13.2vw;
     left: 19.273vw;
+}
+
+.container2 .imgURL p {
+    margin: 0;
+}
+.container2 .imgURL input {
+    margin: 0;
+    vertical-align: middle;
+}
+.container2 .imgURL input.imgURLInput {
+    padding: 0 10px 0 0;
+}
+.container2 .imgURL input.button2 {
+    float: right;
 }
