@@ -30,9 +30,17 @@ const getParam = () => {
     const name = params.get('name');
     const line = params.get('line');
     if(img){
-        //上記から流用
-        document.querySelector(".avatar-display > img.display").src = img;
-        document.querySelector(".avatar-display > label").textContent = "";
+        //上記から流用などから流用
+        if(img.match(/https?/)){
+            const imgNoQuery = img.split('?')[0];
+            const imgElement = document.querySelector(".avatar-display > img.display");
+            imgElement.src = imgNoQuery;
+            console.log("aaa")
+            imgElement.onload = () => {
+                document.querySelector(".avatar-display > label").textContent = "";
+            }
+            
+        }
     }
     if(name){
         document.querySelector(".name > input").value = name;
@@ -48,8 +56,11 @@ getParam();
 // 画像URLをテンプレートの画像として設定
 document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class1 > input.button1").addEventListener('click', ()=>{
     const img = document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class1 > input.imgURLInput").value;
-    const imgNoQuery = img.split('?')[0];
-    document.querySelector(".avatar-display > img.display").src = imgNoQuery;
+    console.log(img)
+    if(img.match(/https?/)){
+        const imgNoQuery = img.split('?')[0];
+        document.querySelector(".avatar-display > img.display").src = imgNoQuery;
+    }
 })
 
 // 現在のテンプレートをURLとしてクリップボードにコピー
