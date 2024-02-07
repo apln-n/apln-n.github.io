@@ -35,8 +35,8 @@ const getParam = () => {
             const imgNoQuery = img.split('?')[0];
             const imgElement = document.querySelector(".avatar-display > img.display");
             imgElement.src = imgNoQuery;
-            console.log("aaa")
             imgElement.onload = () => {
+                console.log("img = "+imgNoQuery);
                 document.querySelector(".avatar-display > label").textContent = "";
             }
             
