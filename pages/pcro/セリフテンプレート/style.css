@@ -2,12 +2,17 @@ body, .wrapper {
     width: 99vw;
     padding: 0;
 }
-.container, .container2 {
+.container {
     width: 90%;
     height: 22vw;
     margin-left: 2%;
     padding: 0;
     position: relative;
+}
+.container2 {
+    width: 90%;
+    margin-left: 2%;
+    padding: 0;
 }
 
 h3 {
