@@ -65,21 +65,29 @@ document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class1 >
 
 // 現在のテンプレートをURLとしてクリップボードにコピー
 document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class2 > input.button2").addEventListener('click', ()=>{
-    const url = window.location.href.split('?')[0];
+    //let url = window.location.href.split('?')[0];
+    let url = "https://apln-n.github.io/pages/pcro/%E3%82%BB%E3%83%AA%E3%83%95%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88/index2.html"
     const img = document.querySelector(".avatar-display > img.display").src;
     const name = document.querySelector(".name > input").value;
-    //なぜかtextareaでは取得できない
+    //なぜかtextContentでは取得できない
     const line = document.querySelector(".container > label.line > textarea").value;
 
     const newurl = () => {
+        url += "?";
         if(img.match(/https?/)){
             console.log("img = " + img);
             console.log("img ok");
-            return url + "?img=" + img + "&name=" + name + "&line=" + line;           
+            url += "img=" + img;           
         }else{
             console.log("img no");
-            return url + "?name=" + name + "&line=" + line;
         }
+        if(name){
+            url += "&name=" + name;
+        }
+        if(line){
+            url += "&line=" + line;
+        }
+        return url;
     }
     /*
         クリップボードにコピー

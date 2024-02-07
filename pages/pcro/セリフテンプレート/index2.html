@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+  <link href="style.css" rel="stylesheet" />
+  <title>セリフテンプレート(クエリ指定のみ)</title>
+</head>
+
+<body>
+  <div class="wrapper">    
+    <div class="container">
+      <img src="./img1/template.png">
+      <!---------- キャラ画像 ---------->
+      <label class="avatar-display">
+        <label>画像</label>
+        <img class="display" />
+      </label>
+      <!---------- 名前 ---------->
+      <label class="name">
+        <input type="text" placeholder="名前" autocomplete="off"/>
+      </label>
+      <!---------- セリフ ---------->
+      <label class="line">
+        <div>名前(自動入力)</div>
+        <textarea placeholder="セリフ" style="overflow:hidden;" autocomplete="off"></textarea>
+      </label>
+      <div class="grey">
+        <!-- セリフの尖ってる部分を灰色にする用 -->
+      </div>
+    </div>
+  </div>
+  <script src="script2.js"></script>
+</body>
+
+</html>
