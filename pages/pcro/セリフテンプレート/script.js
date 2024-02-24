@@ -1,4 +1,32 @@
 /*
+     シーザー暗号(雑)
+     参考: https://www.du-soleil.com/entry/caesar-crypt
+*/
+const SuperStrongMagicNumber = 1;
+const caesar = (str,flag) => {
+    //URLから読み取ったimgが元からhttp(s)形式であった場合
+    if(!flag && str.match(/https?/)){
+        return str;
+    }
+    //そうでない場合
+    else{
+        let newstr = "";
+        if(flag){
+            for(let i=0;i<str.length;i++){
+                newstr += String.fromCharCode(str.charCodeAt(i) + ((i%2==0)? +SuperStrongMagicNumber: -SuperStrongMagicNumber));
+            }
+        }else{
+            for(let i=0;i<str.length;i++){
+                newstr += String.fromCharCode(str.charCodeAt(i) + ((i%2==0)? -SuperStrongMagicNumber: +SuperStrongMagicNumber));
+            }
+        }
+        //String.fromCharCode(val.charCodeAt(i) + key);
+        console.log("シーザー暗号\n"+ str + "\n->\n" + newstr)
+        return newstr;
+    }
+};
+
+/*
     アバター画像の変更
     参考: https://ryjkmr.com/input-typefile-img-display/ 
 */
@@ -26,10 +54,11 @@ document.querySelector(".name > input").addEventListener('input', (e) => {
 const getParam = () => {
     const url = new URL(window.location.href);
     const params = url.searchParams;
-    const img = params.get('img');
+    const imgTmp = params.get('img');
     const name = params.get('name');
     const line = params.get('line');
-    if(img){
+    if(imgTmp){
+        const img = caesar(imgTmp,false)
         //上記から流用などから流用
         if(img.match(/https?/)){
             const imgNoQuery = img.split('?')[0];
@@ -39,7 +68,6 @@ const getParam = () => {
                 console.log("img = "+imgNoQuery);
                 document.querySelector(".avatar-display > label").textContent = "";
             }
-            
         }
     }
     if(name){
@@ -64,7 +92,7 @@ document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class1 >
 })
 
 // 現在のテンプレートをURLとしてクリップボードにコピー
-document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class2 > input.button2").addEventListener('click', ()=>{
+document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class2 > input.noencrypt").addEventListener('click', ()=>{
     //let url = window.location.href.split('?')[0];
     let url = "https://apln-n.github.io/pages/pcro/%E3%82%BB%E3%83%AA%E3%83%95%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88/index2.html"
     const img = document.querySelector(".avatar-display > img.display").src;
@@ -77,7 +105,7 @@ document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class2 >
         if(img.match(/https?/)){
             console.log("img = " + img);
             console.log("img ok");
-            url += "img=" + img;           
+            url += "img=" + caesar(img,true);
         }else{
             console.log("img no");
         }
@@ -102,3 +130,5 @@ document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class2 >
         document.execCommand('copy')
     }
 })
+
+
