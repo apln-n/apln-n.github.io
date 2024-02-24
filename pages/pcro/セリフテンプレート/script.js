@@ -13,11 +13,35 @@ const caesar = (str,flag) => {
         let newstr = "";
         if(flag){
             for(let i=0;i<str.length;i++){
-                newstr += String.fromCharCode(str.charCodeAt(i) + ((i%2==0)? +SuperStrongMagicNumber: -SuperStrongMagicNumber));
+                // A-Z, a-z, 0-9それぞれを巡回群?としてシーザー暗号的な
+                if(str[i].match(/[A-Za-z0-9]/)){
+                    const code = str.charCodeAt(i) + ((i%2==0)? +SuperStrongMagicNumber: -SuperStrongMagicNumber);
+                    if(str[i].match(/[A-Z]/)){
+                        newstr += String.fromCharCode((code - "A".charCodeAt(0) + 26) % 26 + "A".charCodeAt(0))
+                    }else if(str[i].match(/[a-z]/)){
+                        newstr += String.fromCharCode((code - "a".charCodeAt(0) + 26) % 26 + "a".charCodeAt(0))
+                    }else if(str[i].match(/[0-9]/)){
+                        newstr += String.fromCharCode((code - "0".charCodeAt(0) + 10) % 10 + "0".charCodeAt(0))
+                    }
+                }else{
+                    newstr += str[i];
+                }
             }
         }else{
             for(let i=0;i<str.length;i++){
-                newstr += String.fromCharCode(str.charCodeAt(i) + ((i%2==0)? -SuperStrongMagicNumber: +SuperStrongMagicNumber));
+                // 同様に
+                if(str[i].match(/[A-Za-z0-9]/)){
+                    const code = str.charCodeAt(i) + ((i%2==0)? -SuperStrongMagicNumber: +SuperStrongMagicNumber);
+                    if(str[i].match(/[A-Z]/)){
+                        newstr += String.fromCharCode((code - "A".charCodeAt(0) + 26) % 26 + "A".charCodeAt(0))
+                    }else if(str[i].match(/[a-z]/)){
+                        newstr += String.fromCharCode((code - "a".charCodeAt(0) + 26) % 26 + "a".charCodeAt(0))
+                    }else if(str[i].match(/[0-9]/)){
+                        newstr += String.fromCharCode((code - "0".charCodeAt(0) + 10) % 10 + "0".charCodeAt(0))
+                    }
+                }else{
+                    newstr += str[i];
+                }
             }
         }
         //String.fromCharCode(val.charCodeAt(i) + key);
@@ -88,6 +112,7 @@ document.querySelector(".container2 > .imgURL > table > tbody > tr > td.class1 >
     if(img.match(/https?/)){
         const imgNoQuery = img.split('?')[0];
         document.querySelector(".avatar-display > img.display").src = imgNoQuery;
+        document.querySelector(".avatar-display > label").style = "display: none";
     }
 })
 
