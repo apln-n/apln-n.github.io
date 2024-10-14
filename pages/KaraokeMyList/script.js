@@ -11,16 +11,13 @@ const dummyData = [
 ]
 
 async function loadCSVData() {
-    const getData = () => {
-        const response = fetch('result.csv');
-        const text = response.text();
-        const data = text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
-        return data.slice(1)
-    }
+    const response = await fetch('result.csv');
+    const text = await response.text();
+    const data = text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
     // オプションの設定
     const tableOptions = {
         // テーブルの内身を設定
-        "data": getData(),
+        "data": data.slice(1),
         //"data": dummyData,
         "language": {
             "url": "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
