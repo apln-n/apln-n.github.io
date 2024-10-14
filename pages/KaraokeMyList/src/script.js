@@ -7,17 +7,20 @@
 const dummyData = [
     [249,"ディナーベル","はるまきごはん feat.初音ミク","J.","D.","-"],
     [248,"テルーの唄","手嶌葵","J.","D.","-"],
-    [247,"レイニーブーツ","稲葉曇 feat.歌愛ユキ","J.","D.","-"],
+    [247,"レイニーブーツ","稲葉曇 feat.歌愛ユキ","","D.","O"],
 ]
 
-async function loadCSVData() {
-    const response = await fetch('result.csv');
+async function getData() {
+    const response = await fetch('../result.csv');
     const text = await response.text();
     const data = text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
+    return data.slice(1);
+}
+async function loadCSVData() {
     // オプションの設定
     const tableOptions = {
         // テーブルの内身を設定
-        "data": data.slice(1),
+        "data": await data.slice(1),
         //"data": dummyData,
         "language": {
             "url": "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
