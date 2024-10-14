@@ -29,4 +29,8 @@ div.table {
             background-color: #f3f3f3
         };
     }
+    .dt-layout-start {
+        margin-right: 0;
+        display: inline-block;
+    }
 }
