@@ -32,6 +32,7 @@ async function loadCSVData() {
             [0, "desc"]
         ],
         "pagingType": "simple_numbers",
+        "searching": true
     } 
     $("#app").DataTable(tableOptions);
 }
