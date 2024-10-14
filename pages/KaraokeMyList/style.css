@@ -1,5 +1,31 @@
-p.href {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
+.wrapper {
+    margin: 0 20px;
+}
+div.table {
+    overflow-x: auto;
+    display: block;
+}
+.dataTable {
+    border-color: #ddd;
+    color: #111;
+    thead tr {
+        background-color: #d9edf7;
+        :hover {
+            background-color: #049cdb;
+        }
+    }
+    tbody {
+        tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+        tr:nth-child(even) {
+            background-color: #fff;
+        }
+        tr:hover {
+            background-color: #f3f3f3
+        };
+        th {
+            white-space: nowrap;
+        }
+    }
 }
