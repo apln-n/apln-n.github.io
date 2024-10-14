@@ -10,6 +10,18 @@ const dummyData = [
     [247,"レイニーブーツ","稲葉曇 feat.歌愛ユキ","","D.","O"],
 ]
 
+function LinkedData(data) {
+    for(let i=0;i<data.length;i++){
+        if("J.?".includes(data[i][3]) && data[i][3].includes("J")){
+            data[i][3] = '<a href="https://www.joysound.com/web/search/song?cts008=1&match=1&keyword='+data[i][1]+'" target="_blank">'+data[i][3]+'</a>'
+        }
+        if("D.?".includes(data[i][4]) && data[i][4].includes("D")){
+            data[i][4] = '<a href="https://www.clubdam.com/karaokesearch/?type=song&keyword='+data[i][1]+'" target="_blank">'+data[i][4]+'</a>'
+        }
+    }
+    return data;
+}
+
 async function getData() {
     const response = await fetch('./result.csv');
     const text = await response.text();
@@ -20,8 +32,8 @@ async function loadCSVData() {
         // オプションの設定
         const tableOptions = {
             // テーブルの内身を設定
-            "data": data.slice(1),
-            //"data": dummyData,
+            "data": LinkedData(data.slice(1)),
+            //"data": LinkedData(dummyData),
             "language": {
                 "url": "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
             },
