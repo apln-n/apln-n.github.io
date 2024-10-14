@@ -20,8 +20,8 @@ async function loadCSVData() {
     // オプションの設定
     const tableOptions = {
         // テーブルの内身を設定
-        //"data": getData(),
-        "data": dummyData,
+        "data": getData(),
+        //"data": dummyData,
         "language": {
             "url": "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
         },
@@ -33,7 +33,7 @@ async function loadCSVData() {
         ],
         "pagingType": "simple_numbers",
         "searching": true,
-        "responsive": true,
+        "scrollX": true,
     } 
     $("#app").DataTable(tableOptions);
 }
