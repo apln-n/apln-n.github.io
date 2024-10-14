@@ -11,7 +11,7 @@ const dummyData = [
 ]
 
 async function getData() {
-    const response = await fetch('../result.csv');
+    const response = await fetch('./result.csv');
     const text = await response.text();
     return await text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
 }
