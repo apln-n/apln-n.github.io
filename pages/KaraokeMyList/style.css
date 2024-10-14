@@ -1,5 +1,6 @@
 body {
     width: 100%;
+    font-size: 1rem;
 }
 .wrapper {
     margin: 0 20px;
@@ -27,8 +28,5 @@ div.table {
         tr:hover {
             background-color: #f3f3f3
         };
-        th {
-            white-space: nowrap;
-        }
     }
 }
