@@ -13,8 +13,8 @@ const dummyData = [
 async function getData() {
     const response = await fetch('../result.csv');
     const text = await response.text();
-    const data = text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
-    return data.slice(1);
+    const data = await text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
+    return await data.slice(1);
 }
 async function loadCSVData() {
     // オプションの設定
