@@ -13,29 +13,30 @@ const dummyData = [
 async function getData() {
     const response = await fetch('../result.csv');
     const text = await response.text();
-    const data = await text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
-    return await data.slice(1);
+    return await text.trim().split('\n').map(line => line.split(',').map(x => x.trim()));
 }
 async function loadCSVData() {
-    // オプションの設定
-    const tableOptions = {
-        // テーブルの内身を設定
-        "data": await data.slice(1),
-        //"data": dummyData,
-        "language": {
-            "url": "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
-        },
-        "info": true,
-        "displayLength": 50,
-        "lengthMenu": [10,20,50,100,1000],
-        "order":[
-            [0, "desc"]
-        ],
-        "pagingType": "simple_numbers",
-        "searching": true,
-        "scrollX": true,
-    } 
-    $("#app").DataTable(tableOptions);
+    getData().then(data => {
+        // オプションの設定
+        const tableOptions = {
+            // テーブルの内身を設定
+            "data": data.slice(1),
+            //"data": dummyData,
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
+            },
+            "info": true,
+            "displayLength": 50,
+            "lengthMenu": [10,20,50,100,1000],
+            "order":[
+                [0, "desc"]
+            ],
+            "pagingType": "simple_numbers",
+            "searching": true,
+            "scrollX": true,
+        } 
+        $("#app").DataTable(tableOptions);
+    })
 }
   
 loadCSVData();
