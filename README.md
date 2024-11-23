@@ -8,4 +8,5 @@
 - [あなたのステータス](https://apln-n.github.io/pages/yourStatus/)
 - [フラクタル](https://apln-n.github.io/pages/fractal/)
 - [カラーコードタイピング](https://apln-n.github.io/pages/ColorCodeTyping/)
+- [カラオケマイリスト](https://github.com/apln-n/apln-n.github.io/tree/main/pages/KaraokeMyList)
 - [謎のヤツ(1)](https://github.com/apln-n/apln-n.github.io/tree/main/pages/ChieImages)
